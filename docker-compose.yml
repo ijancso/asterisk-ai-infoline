@@ -1,0 +1,31 @@
+services:
+  asterisk:
+    image: andrius/asterisk:latest
+    container_name: asterisk
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./asterisk/conf/sip.conf:/etc/asterisk/sip.conf:ro
+      - ./asterisk/conf/extensions.conf:/etc/asterisk/extensions.conf:ro
+      - ./asterisk/conf/agi-bin:/var/lib/asterisk/agi-bin
+      - asterisk_logs:/var/log/asterisk
+    environment:
+      - ASTERISK_UID=1000
+    depends_on:
+      - bridge
+
+  bridge:
+    build: ./bridge
+    container_name: bridge
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./data:/app/data
+      - ./asterisk/conf/agi-bin:/app/agi-bin
+    env_file:
+      - .env
+    environment:
+      - DB_PATH=/app/data/calls.db
+
+volumes:
+  asterisk_logs:
