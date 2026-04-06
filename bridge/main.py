@@ -22,7 +22,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("bridge.main")
 
-AGI_SRC = Path("/app/asterisk/conf/agi-bin/ai_infoline.py")
+AGI_SRC = Path("/app/agi-bin/ai_infoline.py")
 AGI_DST = Path("/app/agi-bin/ai_infoline.py")
 
 
