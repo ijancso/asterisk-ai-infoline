@@ -27,11 +27,8 @@ AGI_DST = Path("/app/agi-bin/ai_infoline.py")
 
 
 def install_agi() -> None:
-    """Copy AGI script to the shared agi-bin volume that Asterisk reads."""
-    AGI_DST.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(AGI_SRC, AGI_DST)
-    AGI_DST.chmod(0o755)
-    logger.info("AGI script installed at %s", AGI_DST)
+    """AGI script already in place via Docker volume mount — nothing to do."""
+    logger.info("AGI script ready at %s", AGI_DST)
 
 
 def main() -> None:
