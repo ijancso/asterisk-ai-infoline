@@ -1,10 +1,10 @@
 import io
 import logging
 import tempfile
+import subprocess
 from pathlib import Path
 
 from openai import OpenAI
-from pydub import AudioSegment
 
 from config import (
     OPENAI_API_KEY,
@@ -23,35 +23,30 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # ─────────────────────────────────────────────────────────────
 
 def transcribe_audio(audio_path: str) -> str:
-    """
-    Transcribe a WAV/raw audio file using Whisper.
-    Returns the transcribed text, or empty string on failure.
-    """
     path = Path(audio_path)
     if not path.exists() or path.stat().st_size == 0:
         logger.warning("Audio file missing or empty: %s", audio_path)
         return ""
-
-    # Asterisk records in slin (signed linear 16-bit 8kHz).
-    # Whisper accepts mp3/mp4/wav etc. — convert via pydub.
     try:
-        audio = AudioSegment.from_file(audio_path, format="raw",
-                                       frame_rate=8000, channels=1,
-                                       sample_width=2)
-        buf = io.BytesIO()
-        audio.export(buf, format="mp3")
-        buf.seek(0)
-        buf.name = "audio.mp3"
+        mp3_path = audio_path.replace(".slin", ".mp3")
+        subprocess.run([
+            "ffmpeg", "-y",
+            "-f", "s16le", "-ar", "8000", "-ac", "1",
+            "-i", audio_path,
+            mp3_path
+        ], check=True, capture_output=True)
 
-        response = client.audio.transcriptions.create(
-            model=WHISPER_MODEL,
-            file=buf,
-            language="en",
-        )
+        with open(mp3_path, "rb") as f:
+            f.name = "audio.mp3"
+            response = client.audio.transcriptions.create(
+                model=WHISPER_MODEL,
+                file=f,
+                language="en",
+            )
+        os.unlink(mp3_path)
         text = response.text.strip()
         logger.info("Whisper transcript: %r", text)
         return text
-
     except Exception as exc:
         logger.error("Whisper error: %s", exc)
         return ""
@@ -117,29 +112,27 @@ def generate_summary(conversation: list[dict]) -> str:
 # ─────────────────────────────────────────────────────────────
 
 def synthesise_speech(text: str, output_path: str) -> bool:
-    """
-    Convert text to speech using OpenAI TTS.
-    Saves as 8kHz mono signed-16 PCM (slin) for Asterisk.
-    Returns True on success.
-    """
     try:
+        mp3_path = output_path.replace(".slin", ".mp3")
         response = client.audio.speech.create(
             model="tts-1",
             voice=TTS_VOICE,
             input=text,
             response_format="mp3",
         )
+        with open(mp3_path, "wb") as f:
+            f.write(response.content)
 
-        mp3_data = response.content
+        subprocess.run([
+            "ffmpeg", "-y",
+            "-i", mp3_path,
+            "-f", "s16le", "-ar", "8000", "-ac", "1",
+            output_path
+        ], check=True, capture_output=True)
 
-        # Convert to slin format that Asterisk expects
-        audio = AudioSegment.from_mp3(io.BytesIO(mp3_data))
-        audio = audio.set_frame_rate(8000).set_channels(1).set_sample_width(2)
-        audio.export(output_path, format="raw")
-
-        logger.info("TTS saved to %s (%d bytes)", output_path, Path(output_path).stat().st_size)
+        os.unlink(mp3_path)
+        logger.info("TTS saved to %s", output_path)
         return True
-
     except Exception as exc:
         logger.error("TTS error: %s", exc)
         return False
