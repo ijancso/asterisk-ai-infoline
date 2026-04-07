@@ -6,6 +6,7 @@ services:
     network_mode: host
     volumes:
       - ./asterisk/conf/sip.conf:/etc/asterisk/sip.conf:ro
+      - ./asterisk/conf/pjsip.conf:/etc/asterisk/pjsip.conf:ro
       - ./asterisk/conf/extensions.conf:/etc/asterisk/extensions.conf:ro
       - ./asterisk/conf/agi-bin:/var/lib/asterisk/agi-bin
       - asterisk_logs:/var/log/asterisk
