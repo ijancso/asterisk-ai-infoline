@@ -30,12 +30,20 @@ def transcribe_audio(audio_path: str) -> str:
         return ""
     try:
         mp3_path = audio_path.replace(".slin", ".mp3")
-        subprocess.run([
+        result = subprocess.run([
             "ffmpeg", "-y",
             "-f", "s16le", "-ar", "8000", "-ac", "1",
             "-i", audio_path,
             mp3_path
-        ], check=True, capture_output=True)
+        ], capture_output=True, text=True)
+
+        logger.info("ffmpeg stdout: %s", result.stdout)
+        logger.info("ffmpeg stderr: %s", result.stderr)
+        logger.info("ffmpeg returncode: %s", result.returncode)
+
+        if result.returncode != 0:
+            logger.error("ffmpeg failed!")
+            return ""
 
         with open(mp3_path, "rb") as f:
             response = client.audio.transcriptions.create(
