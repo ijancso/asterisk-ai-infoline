@@ -12,6 +12,7 @@ services:
       - ./asterisk/conf/agi-bin:/var/lib/asterisk/agi-bin
       - ./bridge:/app
       - ./.env:/app/.env:ro
+      - ./data:/app/data
       - asterisk_logs:/var/log/asterisk
     environment:
       - ASTERISK_UID=1000
