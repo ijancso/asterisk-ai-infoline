@@ -1,6 +1,7 @@
 services:
   asterisk:
-    image: andrius/asterisk:latest
+    build: ./asterisk
+    #image: andrius/asterisk:latest
     container_name: asterisk
     restart: unless-stopped
     network_mode: host
