@@ -38,10 +38,9 @@ def transcribe_audio(audio_path: str) -> str:
         ], check=True, capture_output=True)
 
         with open(mp3_path, "rb") as f:
-            f.name = "audio.mp3"
             response = client.audio.transcriptions.create(
                 model=WHISPER_MODEL,
-                file=f,
+                file=(mp3_path, f, "audio/mp3"),
                 language="en",
             )
         os.unlink(mp3_path)
