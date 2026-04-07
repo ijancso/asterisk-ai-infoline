@@ -1,4 +1,4 @@
 FROM andrius/asterisk:latest
 USER root
 RUN apt-get update && apt-get install -y python3-pip ffmpeg sox && \
-    pip3 install python-dotenv openai pydub pyst2 --break-system-packages
+    pip3 install python-dotenv openai pydub pyst2 pyaudioop --break-system-packages
