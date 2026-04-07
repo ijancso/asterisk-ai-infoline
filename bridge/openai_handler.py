@@ -49,7 +49,8 @@ def transcribe_audio(audio_path: str) -> str:
         logger.info("Whisper raw response: %r", response)
         return text
     except Exception as exc:
-        logger.error("Whisper error: %s", exc)
+        import traceback
+        logger.error("Whisper error: %s\n%s", exc, traceback.format_exc())
         return ""
 
 
