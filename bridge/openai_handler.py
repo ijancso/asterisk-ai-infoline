@@ -46,6 +46,7 @@ def transcribe_audio(audio_path: str) -> str:
         os.unlink(mp3_path)
         text = response.text.strip()
         logger.info("Whisper transcript: %r", text)
+        logger.info("Whisper raw response: %r", response)
         return text
     except Exception as exc:
         logger.error("Whisper error: %s", exc)
