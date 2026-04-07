@@ -29,7 +29,7 @@ def transcribe_audio(audio_path: str) -> str:
         logger.warning("Audio file missing or empty: %s", audio_path)
         return ""
     try:
-        mp3_path = audio_path.replace(".slin", ".mp3")
+        mp3_path = audio_path.replace(".slin", ".mp3").replace(".sln", ".mp3")
         result = subprocess.run([
             "ffmpeg", "-y",
             "-f", "s16le", "-ar", "8000", "-ac", "1",

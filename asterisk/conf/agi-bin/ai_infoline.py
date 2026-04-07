@@ -103,17 +103,20 @@ def record_caller(agi: AGI) -> str:
     with tempfile.NamedTemporaryFile(suffix=".slin", delete=False) as f:
         tmp_path = f.name
 
-    # beep=False to avoid a tone; silence terminates recording early
+    base_path = tmp_path.removesuffix(".slin")
+
     agi.record_file(
-        filename=tmp_path.removesuffix(".slin"),
+        filename=base_path,
         format="sln",
         escape_digits="#",
-        timeout=RECORD_SECONDS * 1000,   # milliseconds
+        timeout=RECORD_SECONDS * 1000,
         offset=0,
         beep="",
         silence=SILENCE_DETECT,
     )
-    return tmp_path
+    # Asterisk saves as base_path.sln, not base_path.slin
+    actual_path = base_path + ".sln"
+    return actual_path
 
 
 def run(call_id: str, caller_number: str) -> None:
