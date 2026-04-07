@@ -20,7 +20,39 @@ import tempfile
 # Allow imports from /app (bridge directory)
 sys.path.insert(0, "/app")
 
-from asterisk.agi import AGI
+class AGI:
+    def __init__(self):
+        self.env = {}
+        while True:
+            line = sys.stdin.readline().strip()
+            if not line:
+                break
+            if ':' in line:
+                key, val = line.split(':', 1)
+                self.env[key.strip()] = val.strip()
+
+    def answer(self):
+        self._cmd('ANSWER')
+
+    def stream_file(self, filename, escape_digits=''):
+        self._cmd(f'STREAM FILE {filename} "{escape_digits}"')
+
+    def record_file(self, filename, format, escape_digits, timeout, offset=0, beep='', silence=None):
+        cmd = f'RECORD FILE {filename} {format} "{escape_digits}" {timeout}'
+        if silence:
+            cmd += f' s={silence}'
+        self._cmd(cmd)
+
+    def verbose(self, msg, level=1):
+        self._cmd(f'VERBOSE "{msg}" {level}')
+
+    def hangup(self):
+        self._cmd('HANGUP')
+
+    def _cmd(self, command):
+        sys.stdout.write(command + '\n')
+        sys.stdout.flush()
+        return sys.stdin.readline().strip()
 
 import database
 import openai_handler
