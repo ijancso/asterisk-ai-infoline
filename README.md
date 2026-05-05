@@ -22,7 +22,7 @@ An AI-powered phone info line that answers callers' questions in real-time using
 - Docker & Docker Compose
 - A [Twilio account](https://twilio.com) with a SIP trunk
 - An [OpenAI API key](https://platform.openai.com)
-- A phone number (HU for dev, NZ for production)
+- A phone number
 
 ---
 
@@ -81,14 +81,12 @@ Copy `.env.example` to `.env` and fill in:
 3. Add origination URI: `sip:YOUR_SERVER_IP:5060`
 4. Set the number's voice handler to your SIP trunk
 
-### Production (New Zealand number)
+### Production (numbers from other countries)
 
 Same process, but:
-1. Buy a New Zealand (+64) number
-2. Use the **Auckland** region in Twilio for lowest latency
-3. Update `SIP_TRUNK_HOST` in `.env` to the NZ-region endpoint
-
-> **Latency tip:** For NZ production, deploy on a Sydney or Auckland cloud server (e.g. DigitalOcean SYD1 region) to keep round-trip audio delay under 150ms.
+1. Buy a number
+2. Use the **nearest** region in Twilio for lowest latency
+3. Update `SIP_TRUNK_HOST` in `.env` to this endpoint
 
 ---
 
@@ -163,7 +161,6 @@ asterisk-ai-infoline/
 ## Deployment (DigitalOcean)
 
 For **development** (Hungary): Frankfurt region (`fra1`) — ~15ms from Budapest  
-For **production** (New Zealand): Sydney region (`syd1`) — ~20ms from Auckland
 
 ```bash
 # One-liner server setup on fresh Ubuntu 22.04
