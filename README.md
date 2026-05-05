@@ -6,10 +6,7 @@ An AI-powered phone info line that answers callers' questions in real-time using
 
 ## How it works
 
-```
 ![image](https://github.com/user-attachments/assets/9f2f149d-65f0-419c-8bfe-a1bc6e8f283f)
-
-```
 
 1. A call arrives via Twilio SIP trunk into Asterisk
 2. Asterisk streams the audio to the Python bridge via AGI
