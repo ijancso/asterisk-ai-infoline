@@ -7,7 +7,7 @@ An AI-powered phone info line that answers callers' questions in real-time using
 ## How it works
 
 ```
-<img width="871" height="863" alt="image" src="https://github.com/user-attachments/assets/9f2f149d-65f0-419c-8bfe-a1bc6e8f283f" />
+![image](https://github.com/user-attachments/assets/9f2f149d-65f0-419c-8bfe-a1bc6e8f283f)
 
 ```
 
